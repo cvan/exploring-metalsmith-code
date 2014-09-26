@@ -2,7 +2,6 @@ var Metalsmith = require('metalsmith');
 var collections = require('metalsmith-collections');
 var Handlebars = require('handlebars');
 var templates = require('metalsmith-templates');
-var _ = require('lodash');
 var path = require('path');
 var fs = require('fs');
 
@@ -17,7 +16,8 @@ var PLATFORMS = {
 Metalsmith(__dirname)
     .destination('output')
     .use(function (files, metalsmith, done) {
-        _.each(files, function (file, key) {
+        Object.keys(files).forEach(function (key) {
+            var file = files[key];
             if (path.extname(key) === '.json') {
                 file.config = JSON.parse(file.contents);
             }
@@ -25,10 +25,12 @@ Metalsmith(__dirname)
         done();
     })
     .use(function (files, metalsmith, done) {
-        _.each(files, function (file, key) {
+        Object.keys(files).forEach(function (key) {
+            var file = files[key];
             if (path.extname(key) === '.json') {
                 var platforms = {};
-                _.each(PLATFORMS, function(ext, platform) {
+                Object.keys(PLATFORMS).forEach(function(ext) {
+                    var platform = files[ext];
                     var relativePath = path.join(path.dirname(key), ARTIFACT + ext);
                     var absolutePath = path.resolve(metalsmith.dir, metalsmith._src, relativePath);
                     if(fs.existsSync(absolutePath)) {
